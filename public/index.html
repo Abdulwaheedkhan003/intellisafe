@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ThreatLens — AI Email Security & SOC Operations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles/threat_card.css">
+  <link rel="stylesheet" href="/styles/forensic_view.css">
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+  <div class="app-layout">
+    
+    <!-- TOP NAVIGATION BAR -->
+    <header class="navbar">
+      <div class="nav-brand">
+        <div class="logo-badge">🔬</div>
+        <div>
+          <div class="brand-title">ThreatLens <span class="version-tag">v1.0 AI Engine</span></div>
+          <div class="brand-subtitle">Real-Time Explainable Threat Classification</div>
+        </div>
+      </div>
+
+      <!-- SOC STATUS MONITOR -->
+      <div class="soc-status-badge">
+        <span class="status-pulse-dot"></span>
+        <span class="status-text-live" id="soc-status-text">🟢 PROTECTION ACTIVE (24/7 Monitoring)</span>
+        <span class="mode-pill demo" id="current-mode-pill">DEMO SIMULATION</span>
+      </div>
+
+      <!-- HEADER ACTIONS -->
+      <div class="nav-actions">
+        <button class="nav-btn secondary" id="btn-open-audit-modal">📋 Audit Trail</button>
+        <button class="nav-btn secondary" id="btn-open-quarantine-modal">🔒 Quarantine (<span id="quarantine-count-badge">0</span>)</button>
+        <button class="nav-btn primary" id="btn-open-oauth-modal">⚙️ Live Gmail Setup</button>
+      </div>
+    </header>
+
+    <!-- MAIN WORKSPACE -->
+    <div class="main-body">
+
+      <!-- LEFT SIDEBAR: MAILBOX FOLDERS & SAMPLE INJECTOR -->
+      <aside class="sidebar">
+        <div class="sidebar-section-title">SIMULATED GMAIL</div>
+        <nav class="mailbox-folders">
+          <button class="folder-btn active" data-folder="inbox">
+            <span class="folder-icon">📥</span>
+            <span class="folder-name">Inbox</span>
+            <span class="folder-badge" id="count-inbox">0</span>
+          </button>
+          <button class="folder-btn" data-folder="quarantine">
+            <span class="folder-icon">🔒</span>
+            <span class="folder-name">Quarantine</span>
+            <span class="folder-badge alert" id="count-quarantine">0</span>
+          </button>
+          <button class="folder-btn" data-folder="spam">
+            <span class="folder-icon">🧹</span>
+            <span class="folder-name">Spam</span>
+            <span class="folder-badge" id="count-spam">0</span>
+          </button>
+          <button class="folder-btn" data-folder="trash">
+            <span class="folder-icon">🗑️</span>
+            <span class="folder-name">Trash</span>
+            <span class="folder-badge" id="count-trash">0</span>
+          </button>
+        </nav>
+
+        <hr class="sidebar-divider">
+
+        <!-- 10 TEST THREAT SAMPLES INJECTOR -->
+        <div class="sidebar-section-title">TEST THREAT SAMPLES</div>
+        <div class="sample-injector-list" id="samples-list">
+          <div class="loading-shimmer">Loading samples...</div>
+        </div>
+
+        <div class="sidebar-footer">
+          <button class="reset-mailbox-btn" id="btn-reset-demo">🔄 Reset Demo Mailbox</button>
+        </div>
+      </aside>
+
+      <!-- MIDDLE COLUMN: EMAIL LIST -->
+      <section class="email-list-pane">
+        <div class="pane-header">
+          <div class="pane-title" id="current-folder-title">Inbox</div>
+          <div class="pane-subtitle" id="email-count-label">0 messages</div>
+        </div>
+        <div class="email-items-container" id="email-items-container">
+          <!-- Populated dynamically -->
+        </div>
+      </section>
+
+      <!-- RIGHT COLUMN: EMAIL VIEWER & THREAT CARD -->
+      <main class="email-viewer-pane">
+        <div class="empty-state" id="email-viewer-empty">
+          <div class="empty-icon">📨</div>
+          <h3>Select an email to inspect</h3>
+          <p>Click on any message from the list or inject a test threat sample to see real-time AI security analysis.</p>
+        </div>
+
+        <div class="email-detail-container hidden" id="email-viewer-content">
+          
+          <!-- THREATLENS CARD INJECTION CONTAINER -->
+          <div id="injected-threat-card-container"></div>
+
+          <!-- EMAIL HEADERS & METADATA -->
+          <div class="email-header-box">
+            <div class="email-subject-title" id="view-subject">Subject</div>
+            <div class="email-meta-grid">
+              <div class="meta-item"><span class="meta-label">From:</span> <span id="view-from" class="meta-val"></span></div>
+              <div class="meta-item"><span class="meta-label">To:</span> <span id="view-to" class="meta-val"></span></div>
+              <div class="meta-item"><span class="meta-label">Date:</span> <span id="view-date" class="meta-val"></span></div>
+              <div class="meta-item"><span class="meta-label">Auth:</span> <span id="view-auth-summary" class="meta-val"></span></div>
+            </div>
+          </div>
+
+          <!-- EMAIL BODY CONTENT -->
+          <div class="email-body-content" id="view-body"></div>
+
+          <!-- ATTACHMENTS LIST IF ANY -->
+          <div class="email-attachments-section hidden" id="view-attachments-box">
+            <div class="attachments-title">📎 Attachments</div>
+            <div class="attachments-list" id="view-attachments-list"></div>
+          </div>
+        </div>
+      </main>
+
+    </div>
+
+    <!-- MODAL: AUDIT TRAIL -->
+    <div class="modal-overlay hidden" id="modal-audit">
+      <div class="modal-card wide">
+        <div class="modal-header">
+          <div class="modal-title">📋 Automated Security Action Audit Log</div>
+          <button class="modal-close" data-close="modal-audit">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="audit-table-wrapper">
+            <table class="audit-table">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Action</th>
+                  <th>Category</th>
+                  <th>Risk</th>
+                  <th>Subject</th>
+                  <th>Reason</th>
+                </tr>
+              </thead>
+              <tbody id="audit-table-body">
+                <tr><td colspan="6" class="text-center">No actions recorded yet</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: QUARANTINE MANAGER -->
+    <div class="modal-overlay hidden" id="modal-quarantine">
+      <div class="modal-card wide">
+        <div class="modal-header">
+          <div class="modal-title">🔒 Quarantine Hold Manager</div>
+          <button class="modal-close" data-close="modal-quarantine">✕</button>
+        </div>
+        <div class="modal-body">
+          <p class="modal-desc">ThreatLens isolates high-severity threats without permanent loss. Authorized users can review forensic evidence and safely restore messages to the inbox.</p>
+          <div class="quarantine-list" id="quarantine-manager-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: GMAIL OAUTH CONFIG -->
+    <div class="modal-overlay hidden" id="modal-oauth">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title">⚙️ Gmail Live Integration (OAuth 2.0)</div>
+          <button class="modal-close" data-close="modal-oauth">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="oauth-status-box" id="oauth-status-info">
+            Checking status...
+          </div>
+
+          <form id="oauth-form" class="oauth-form">
+            <div class="form-group">
+              <label>Google Cloud Client ID</label>
+              <input type="text" id="oauth-client-id" placeholder="123456789-abc.apps.googleusercontent.com" class="form-input">
+            </div>
+            <div class="form-group">
+              <label>Google Cloud Client Secret</label>
+              <input type="password" id="oauth-client-secret" placeholder="GOCSPX-..." class="form-input">
+            </div>
+            <div class="form-group">
+              <label>Redirect URI</label>
+              <input type="text" id="oauth-redirect-uri" value="http://localhost:3000/api/gmail/oauth2callback" readonly class="form-input readonly">
+            </div>
+            <div class="form-actions">
+              <button type="button" class="nav-btn primary" id="btn-connect-gmail">🔗 Connect with Google OAuth</button>
+              <button type="button" class="nav-btn secondary" id="btn-sync-gmail">🔄 Poll Gmail Inbox Now</button>
+              <button type="button" class="nav-btn danger" id="btn-disconnect-gmail">Disconnect</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- LOAD APPLICATION SCRIPTS -->
+  <script src="/src/analysis/taxonomy.js"></script>
+  <script src="/src/ui/forensic_view.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

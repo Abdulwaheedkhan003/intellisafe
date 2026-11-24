@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ThreatLens</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 320px;
+      background: #0e1016;
+      color: #e0e0e0;
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-size: 13px;
+    }
+
+    .header {
+      padding: 16px 18px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon { font-size: 22px; }
+
+    .logo-text {
+      font-size: 15px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+    }
+
+    .logo-sub {
+      font-size: 10px;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.06em;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-row {
+      padding: 12px 18px;
+      background: rgba(52, 199, 89, 0.08);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #34C759;
+      box-shadow: 0 0 8px #34C759;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    .status-text {
+      font-size: 11px;
+      font-weight: 700;
+      color: #34C759;
+    }
+
+    .mode-tag {
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 8px;
+      background: rgba(255, 149, 0, 0.2);
+      color: #ff9500;
+      text-transform: uppercase;
+    }
+
+    .stats-grid {
+      padding: 14px 18px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .stat-box {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 8px;
+      padding: 10px 8px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 16px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .stat-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-top: 3px;
+    }
+
+    .action-links {
+      padding: 14px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .btn-action {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      text-decoration: none;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .btn-action.primary {
+      background: #007aff;
+      color: #ffffff;
+    }
+
+    .btn-action.primary:hover {
+      background: #0062cc;
+    }
+
+    .btn-action.secondary {
+      background: rgba(255,255,255,0.05);
+      color: #e0e0e0;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .btn-action.secondary:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .footer {
+      padding: 10px 18px;
+      font-size: 10px;
+      color: rgba(255,255,255,0.3);
+      text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo-group">
+      <span class="logo-icon">🔬</span>
+      <div>
+        <div class="logo-text">ThreatLens</div>
+        <div class="logo-sub">AI Email Security</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="status-row">
+    <div class="status-badge">
+      <div class="status-dot"></div>
+      <span class="status-text" id="status-text">PROTECTION ACTIVE</span>
+    </div>
+    <span class="mode-tag" id="mode-badge">24/7 MONITORING</span>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-box">
+      <div class="stat-value" id="stat-scanned">0</div>
+      <div class="stat-label">Scanned</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-value" style="color:#ff2d55" id="stat-threats">0</div>
+      <div class="stat-label">Threats</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-value" style="color:#ff9500" id="stat-quarantine">0</div>
+      <div class="stat-label">Quarantine</div>
+    </div>
+  </div>
+
+  <div class="action-links">
+    <button class="btn-action primary" id="btn-open-soc">🖥️ Open Security Operations Center</button>
+    <button class="btn-action secondary" id="btn-open-demo">📥 Open Simulated Gmail Client</button>
+  </div>
+
+  <div class="footer">
+    ThreatLens Engine v1.0 · 105+ Threat Taxonomy
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

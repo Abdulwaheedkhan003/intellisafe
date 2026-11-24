@@ -1,0 +1,63 @@
+{
+  "manifest_version": 3,
+  "name": "ThreatLens — AI Email Security",
+  "version": "1.0.0",
+  "description": "Real-time explainable threat classification for Gmail. Every threat explained with evidence.",
+  "permissions": [
+    "storage",
+    "tabs",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://mail.google.com/*",
+    "http://localhost:3000/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://mail.google.com/*"],
+      "js": [
+        "src/analysis/taxonomy.js",
+        "src/analysis/detectors/sender_detector.js",
+        "src/analysis/detectors/header_detector.js",
+        "src/analysis/detectors/url_detector.js",
+        "src/analysis/detectors/content_detector.js",
+        "src/analysis/detectors/attachment_detector.js",
+        "src/analysis/risk_calculator.js",
+        "src/analysis/explanation_engine.js",
+        "src/analysis/analysis_engine.js",
+        "src/ui/threat_card.js",
+        "src/ui/forensic_view.js",
+        "src/ui/safe_card.js",
+        "content_script.js"
+      ],
+      "css": [
+        "styles/threat_card.css",
+        "styles/forensic_view.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["styles/*", "icons/*"],
+      "matches": ["https://mail.google.com/*"]
+    }
+  ]
+}

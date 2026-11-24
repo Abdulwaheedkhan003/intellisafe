@@ -1,0 +1,9 @@
+node_modules/
+.env
+threatlens.db
+threatlens.db-shm
+threatlens.db-wal
+dist/
+*.log
+.DS_Store
+Thumbs.db
